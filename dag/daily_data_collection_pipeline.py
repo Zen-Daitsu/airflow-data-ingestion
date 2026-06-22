@@ -2,24 +2,27 @@
 #Date : 05/02/2025
 #Examen final - Collecte de données
 
-from airflow.models import DAG
-from airflow.utils.dates import days_ago
-from tasks.task_start_collect import create_start_collect_task
-from tasks.task_print_list import create_print_list_task
-from tasks.task_print_success import create_print_success_task
-from tasks.task_end_collect import create_end_collect_task
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+from tasks import (
+    create_start_collect_task,
+    create_print_list_task,
+    create_print_success_task,
+    create_end_collect_task
+)
 
 default_args = {
     'owner': 'amink',
-    'start_date': days_ago(1),
+    'start_date': datetime(2026, 1, 1),
     'retries': 1,
 }
 
 # DAG
 with DAG(
-    'A53_Exercice2',
+    'daily_data_collection',
     default_args=default_args,
-    description='Exercice 2',
     schedule_interval='@daily',
     catchup=False,
 ) as dag:
