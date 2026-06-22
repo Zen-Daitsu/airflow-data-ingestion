@@ -1,6 +1,7 @@
 import pytest
-from airflow.utils.dates import days_ago
+import datetime
 from airflow.models import DAG
+from airflow.utils import timezone
 from tasks.task_start_collect import create_start_collect_task
 from tasks.task_print_list import create_print_list_task, print_list
 from tasks.task_print_success import create_print_success_task, print_success_message
@@ -9,7 +10,7 @@ from tasks.task_end_collect import create_end_collect_task
 # Fixture to provide a DAG object for task creation
 @pytest.fixture
 def dag():
-    return DAG('test_dag', start_date=days_ago(1))
+    return DAG('test_dag', start_date=timezone.utcnow() - datetime.timedelta(days=1))
 
 # 1. Infrastructure Tests
 def test_task_initialization(dag):
@@ -27,6 +28,7 @@ def test_task_initialization(dag):
     t4 = create_end_collect_task(dag)
     assert t4.task_id == 'end_collect'
 
+# 2. Logic Tests
 def test_print_list_logic(capsys):
     print_list()
     captured = capsys.readouterr()
